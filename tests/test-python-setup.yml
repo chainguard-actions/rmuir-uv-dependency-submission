@@ -1,0 +1,41 @@
+name: Test Python Setup
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_REF: refs/heads/main
+      GITHUB_EVENT_NAME: push
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # Run the action under test. The action sets up Python 3.12 and then runs
+      # action.py which calls the GitHub API. The API call will fail without a
+      # real token, but we verify Python 3.12 is set up correctly.
+      - id: action
+        uses: .
+        continue-on-error: true
+        env:
+          GH_TOKEN: fake-token-for-testing
+
+      - name: Assert Python 3.12 is available after action ran
+        run: |
+          VERSION=$(python --version 2>&1)
+          echo "Python version: $VERSION"
+          if ! echo "$VERSION" | grep -q "3.12"; then
+            echo "FAIL: expected Python 3.12, got: $VERSION"
+            exit 1
+          fi
+          echo "PASS: Python 3.12 is available"
+
+      - name: Assert action.py exists and is syntactically valid
+        run: |
+          ACTION_PY="$GITHUB_WORKSPACE/action.py"
+          echo "Checking: $ACTION_PY"
+          if [ ! -f "$ACTION_PY" ]; then
+            echo "FAIL: action.py not found at $ACTION_PY"
+            exit 1
+          fi
+          python -c "import ast; ast.parse(open('$ACTION_PY').read())"
+          echo "PASS: action.py is valid Python"
