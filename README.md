@@ -9,6 +9,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
 | v1.0.0 | [`v1.0.0`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/tree/v1.0.0) | [`1c48aaa`](https://github.com/rmuir/uv-dependency-submission/commit/1c48aaac13e566e39fd04269ff1900b86c1105c5) |
+| v1.1.1 | [`v1.1.1`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/tree/v1.1.1) | [`8c650a3`](https://github.com/rmuir/uv-dependency-submission/commit/8c650a3e5e519b93e604e644f7a4a3953144babe) |
 
 ## Privacy
 
