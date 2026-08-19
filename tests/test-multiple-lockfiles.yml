@@ -1,4 +1,4 @@
-name: Test basic uv dependency submission
+name: Test multiple uv.lock files submission
 on:
   workflow_dispatch:
 permissions:
@@ -8,20 +8,23 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_JOB: test
-      GITHUB_WORKFLOW: "Test basic uv dependency submission"
+      GITHUB_WORKFLOW: "Test multiple uv.lock files submission"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Verify fixture uv.lock is tracked by git
+      - name: Verify multiple uv.lock files are tracked by git
         run: |
           echo "Checking git ls-files for uv.lock files..."
           FILES=$(git ls-files -- uv.lock '**/uv.lock')
-          echo "Found: $FILES"
-          if [ -z "$FILES" ]; then
-            echo "FAIL: no uv.lock files found by git ls-files"
+          echo "Found lockfiles:"
+          echo "$FILES"
+          COUNT=$(echo "$FILES" | grep -c 'uv.lock' || true)
+          echo "Count: $COUNT"
+          if [ "$COUNT" -lt 2 ]; then
+            echo "FAIL: expected at least 2 uv.lock files, found $COUNT"
             exit 1
           fi
-          echo "PASS: found uv.lock files"
+          echo "PASS: found $COUNT uv.lock files"
 
       - name: Install mock gh to intercept dependency-graph API call
         run: |
@@ -38,7 +41,7 @@ jobs:
       - id: action
         uses: .
 
-      - name: Assert action completed successfully
+      - name: Assert action completed successfully with multiple lockfiles
         run: |
-          echo "Action completed without error"
+          echo "Action completed without error for multiple lockfiles"
           echo "PASS"
