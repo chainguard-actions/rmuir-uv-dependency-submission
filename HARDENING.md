@@ -16,11 +16,11 @@ Action **rmuir--uv-dependency-submission/v1.1.1** was hardened automatically. 1 
 
 ### script-injection (severity: high)
 
-Rule (b) violation in action.yml: the `run:` block expands `${ACTION_PATH}` without double-quoting it (`python ${ACTION_PATH}/action.py`). The variable `ACTION_PATH` is sourced from `${{ github.action_path }}` (a `github.*` context). An unquoted shell variable expansion allows the shell to parse metacharacters out of the value. The fix is to quote the expansion: `python "${ACTION_PATH}/action.py"`.
+Rule (b) violation: In the 'Submit from lockfiles' step of action.yml, the run block executes `python ${ACTION_PATH}/action.py` where `ACTION_PATH` is sourced from `${{ github.action_path }}` via the env block. The shell variable expansion `${ACTION_PATH}` is unquoted, so if the action path contained shell metacharacters (e.g. spaces, semicolons, or subshell syntax), bash would interpret them, enabling command injection. The fix is to quote the expansion: `python "${ACTION_PATH}/action.py"`.
 
 Locations:
 
-- `action.yml:10`
+- `action.yml:12`
 
 ## Iteration Notes
 
@@ -30,5 +30,5 @@ Locations:
 
 **Notes:**
 
-Fixed unquoted variable expansion in action.yml line 10: changed `python ${ACTION_PATH}/action.py` to `python "${ACTION_PATH}/action.py"`. The ACTION_PATH env var was already properly set via the step's `env:` block; only the double-quoting of the shell expansion was missing.
+Fixed unquoted shell variable expansion in action.yml line 12. Changed `python ${ACTION_PATH}/action.py` to `python "${ACTION_PATH}/action.py"` to prevent potential command injection if the action path contains shell metacharacters (spaces, semicolons, subshell syntax, etc.).
 
