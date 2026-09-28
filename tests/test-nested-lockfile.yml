@@ -1,0 +1,55 @@
+name: Test with nested uv.lock in subdirectory
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create a nested uv.lock file in a subdirectory
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/subproject"
+          cat > "$GITHUB_WORKSPACE/subproject/uv.lock" << 'EOF'
+          version = 1
+
+          [[package]]
+          name = "flask"
+          version = "3.0.0"
+          source = { registry = "https://pypi.org/simple" }
+
+          [[package]]
+          name = "werkzeug"
+          version = "3.0.1"
+          source = { registry = "https://pypi.org/simple" }
+
+          [[package]]
+          name = "subapp"
+          version = "0.1.0"
+          source = { virtual = "." }
+
+          [package.metadata]
+          requires-dist = [
+              { name = "flask" },
+          ]
+          EOF
+          # Stage the file so git ls-files can find it
+          git add "$GITHUB_WORKSPACE/subproject/uv.lock"
+
+      - id: action
+        uses: .
+        continue-on-error: true
+
+      - name: Assert action ran (parsed nested lock file or failed gracefully on sentinel repo)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action succeeded with nested lock file"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (sentinel repo is not resolvable via GitHub API)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

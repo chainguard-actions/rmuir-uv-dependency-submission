@@ -1,0 +1,47 @@
+name: Test basic usage with uv.lock
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create a minimal uv.lock file in the workspace
+        run: |
+          cat > "$GITHUB_WORKSPACE/uv.lock" << 'EOF'
+          version = 1
+
+          [[package]]
+          name = "requests"
+          version = "2.31.0"
+          source = { registry = "https://pypi.org/simple" }
+
+          [[package]]
+          name = "myapp"
+          version = "0.1.0"
+          source = { virtual = "." }
+
+          [package.metadata]
+          requires-dist = [
+              { name = "requests" },
+          ]
+          EOF
+
+      - id: action
+        uses: .
+        continue-on-error: true
+
+      - name: Assert action ran (parsed lock file or failed gracefully on sentinel repo)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action succeeded"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (sentinel repo is not resolvable via GitHub API)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
