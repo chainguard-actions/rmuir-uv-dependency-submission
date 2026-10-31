@@ -6,10 +6,10 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 ## Versions
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v1.0.0 | [`v1.0.0`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/tree/v1.0.0) | [`1c48aaa`](https://github.com/rmuir/uv-dependency-submission/commit/1c48aaac13e566e39fd04269ff1900b86c1105c5) |
-| v1.1.1 | [`v1.1.1`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/tree/v1.1.1) | [`8c650a3`](https://github.com/rmuir/uv-dependency-submission/commit/8c650a3e5e519b93e604e644f7a4a3953144babe) |
+| Version | Tag | Upstream commit | Hardening report |
+|---------|-----|-----------------|------------------|
+| v1.0.0 | [`v1.0.0`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/tree/v1.0.0) | [`1c48aaa`](https://github.com/rmuir/uv-dependency-submission/commit/1c48aaac13e566e39fd04269ff1900b86c1105c5) | [`HARDENING.md`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/blob/v1.0.0/HARDENING.md) |
+| v1.1.1 | [`v1.1.1`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/tree/v1.1.1) | [`8c650a3`](https://github.com/rmuir/uv-dependency-submission/commit/8c650a3e5e519b93e604e644f7a4a3953144babe) | [`HARDENING.md`](https://github.com/chainguard-actions/rmuir-uv-dependency-submission/blob/v1.1.1/HARDENING.md) |
 
 ## Privacy
 
